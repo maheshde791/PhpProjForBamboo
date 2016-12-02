@@ -1,0 +1,65 @@
+<project name="Composer-test-php" basedir="." default="main">
+
+	<property name="src.dir"     value="src"/>
+	<property name="build.dir"   value="build"/>
+	
+<target name="clean">
+ <delete dir="${basedir}/build/logs"/>
+ <delete dir="${basedir}/build/pdepend"/>
+
+
+</target>
+
+ <target name="prepare" depends="clean" description="Prepare for phploc">
+  <mkdir dir="${basedir}/build/logs"/>
+	<mkdir dir="${basedir}/build/tools"/>
+	<mkdir dir="${basedir}/build/pdepend"/>
+  <chmod file="${basedir}/build/tools/**" perm="ugo+x"/>
+ </target>
+
+<target name="phploc" depends="prepare"> <!--To measure size of project -->
+<exec executable="${basedir}/build/tools/phploc.phar">
+   <arg value="--count-tests"/>
+   <arg value="--log-csv"/>
+   <arg path="${basedir}/build/logs/phploc.csv"/>
+   <arg value="--log-xml"/>
+   <arg path="${basedir}/build/logs/phploc.xml"/>
+   <arg path="${basedir}/src"/>
+   <arg path="${basedir}/tests"/> 
+  </exec>
+</target>
+
+
+
+<target name="pdepend" description="Calculate software metrics using PHP_Depend">
+  <exec executable="${basedir}/build/tools/pdepend.phar">
+   <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml"/>
+   <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg"/>
+   <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg"/>
+   <arg path="${basedir}/src"/>
+  </exec>
+ </target>
+
+<target name="phpmd" description="Perform project mess detection using PHPMD and print result in text format">
+  <exec executable="${basedir}/build/tools/phpmd.phar">
+   <arg path="${basedir}/src"/>
+   <arg value="text"/>
+   <arg path="${basedir}/build/phpmd.xml"/>
+   <arg value="--reportfile"/>
+   <arg path="${basedir}/build/logs/pmd.txt"/>
+  </exec>
+ </target>
+
+<target name="phpmd-ci" description="Perform project mess detection using PHPMD and log result in XML format">
+  <exec executable="${basedir}/build/tools/phpmd.phar">
+   <arg path="${basedir}/src"/>
+   <arg value="html"/>
+   <arg path="${basedir}/build/phpmd.xml"/>
+   <arg value="--reportfile"/>
+   <arg path="${basedir}/build/logs/pmd.html"/>
+  </exec>
+ </target>
+
+
+<target name="main" depends="phploc,pdepend,phpmd,phpmd-ci"/>
+</project>

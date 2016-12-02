@@ -1,0 +1,3 @@
+
+/home/maheshde/ant-pract/PhpProjForComposer/src/Product.php:34	Avoid unused local variables such as '$helper'.
+/home/maheshde/ant-pract/PhpProjForComposer/src/Product.php:37	Avoid unused local variables such as '$helper'.
